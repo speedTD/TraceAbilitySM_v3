@@ -298,25 +298,19 @@ function validate() {
 //    }
 //});
 
-
+var listImage=[];
 $("#Images").change(function (e) {
-
-
-
     var myfiles = document.getElementById("Images").files;
     var viewImages = document.getElementById("viewImages");
-
-    var quan = document.getElementById("Images").value;
+    var quan = document.getElementById("Images");
     var imageType = /image.*/;
-    console.log(quan);
+ 
     var html = '';
     if (myfiles.length > 0) {
         for (i = 0; i < myfiles.length; i++) {
 
-
-
-
-          
+            listImage.push(myfiles.item(i));
+           
             //var divuploadimagetools = document.createElement("div");
             //divuploadimagetools.className = "upload-image-tools";
             //divuploadimagetools.innerHTML = '<span class="upload-tool-delete"></span>';
@@ -351,7 +345,6 @@ $("#Images").change(function (e) {
                     divContainer.appendChild(tagA);
                     viewImages.appendChild(divContainer);
                 }
-
                 reader.readAsDataURL(myfiles[i]);
             }
             else {
@@ -387,10 +380,25 @@ $('#Images').change(function () {
 });
 
 function removeIndexImage(index) {
-    console.log("Xoa vi tri Thu " + index);
+    console.log("Xoa vi tri Thu " + index + "list file con :" + listImage.length);
+    //delete List
+
+    listImage.splice(index, 1);
+    //update listImage=>Select file
+   
+    var formData = new FormData();
+    for (var i = 0, len = listImage.length; i < len; i++) {
+        formData.append("Images", listImage[i].file);
+    }
+    for (var pair of formData.entries()) {
+        i++;
+        console.log(pair[0]);
+       
+    }
+
     var elements = document.getElementsByClassName("DivImage");
         elements[index-1].parentNode.removeChild(elements[index-1]);
-  
+        elements[index - 1].nodeValue = "";
   //  $('#DivImage').eq(index).remove();
 }
 // **** Region CRUD ***************************************************** 
