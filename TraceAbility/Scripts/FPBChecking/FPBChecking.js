@@ -7,7 +7,7 @@
 
     $('#UserID').val($('#UserLogin').data('username'));
     $("input[name='Result']").val(["OK"]);
-    debugger;
+    
 });
 var checkOK = "OK";
 var FPBCheckingIDLast = "";
@@ -236,98 +236,33 @@ function validate() {
     else {
         $('#BatchNo').css('border-color', 'lightgrey');
     }
-    //debugger;
-    //var result_data = $("input[name='rdo_Result']:checked").val();
-    //if (result_data == null || result_data == "" || result_data == 'undefined') {
-    //    alert('Hãy chọn kết quả kiểm tra/Please,choose Result! ');
-    //    isValid = false;
-    //}
-    //else {
-    //    $('#Result').css('border-color', 'lightgrey');
-    //}
+ 
     return isValid;
 }
-// **** Event ***************************************************** 
-//$("#Images").change(function (e) {
-   
-//    var myfiles = document.getElementById("Images").files;
-//    var viewImages = document.getElementById("viewImages");
-   
-//    var quan = document.getElementById("Images").value;
-//    var imageType = /image.*/;
-//    console.log(quan);
-//    var html = '';
-//    if (myfiles.length > 0) {
-//        for (i = 0; i < myfiles.length; i++) {
 
-            
-        
-//            if (myfiles[i].type.match(imageType)) {   //image file.
-              
-//                var temp = 0;
-//                var reader = new FileReader();
-//                reader.onload = function (event) {
-//                    temp++;
-
-//                    html += '<div class="ImageContainer" style="position:relative;text-align:center;">';
-//                    html += '<div style="position:absolute;top:8px;right:16px;font-size:18px">';
-//                    html += '<a href="#" onclick="removeIndexImage(' + temp + ')" class="btn btn-primary"><img style="width:25px;height:19px;" src="/Images/Common/upload-tool-delete.png"/></a>';
-//                    html += '</div>';
-//                    html += '<a href="' + event.target.result + '">';
-//                    html += '<img src="' + event.target.result + '" style="width:100%"/>';
-//                    html += '</a>';
-//                    //html += '</div>';
-//                    html += '</div>';
-//                }
-
-//                reader.readAsDataURL(myfiles[i]);
-//            }
-//            else {
-//                var extention = myfiles[i].name.substring(myfiles[i].name.lastIndexOf(".") + 1).toLowerCase();
-//                if (extention == "pdf")
-//                {
-//                    var tagLabel = document.createElement("lable");
-//                    tagLabel.innerHTML = myfiles[i].name;
-//                    tagLabel.style.fontWeight = "bold";
-//                    //viewImages.appendChild(divContainer);
-//                    viewImages.appendChild(tagLabel);
-//                }
-//            }
-//        }
-//        $('#viewImages').html(html);
-//    }
-//});
 
 var listImage=[];
 $("#Images").change(function (e) {
     var myfiles = document.getElementById("Images").files;
     var viewImages = document.getElementById("viewImages");
-    var quan = document.getElementById("Images");
+ 
     var imageType = /image.*/;
  
     var html = '';
     if (myfiles.length > 0) {
         for (i = 0; i < myfiles.length; i++) {
-
+    
             listImage.push(myfiles.item(i));
            
-            //var divuploadimagetools = document.createElement("div");
-            //divuploadimagetools.className = "upload-image-tools";
-            //divuploadimagetools.innerHTML = '<span class="upload-tool-delete"></span>';
-            //divuploadimagetools.className = "upload-image-tools";
 
             if (myfiles[i].type.match(imageType)) {   //image file.
-
                 var temp = 0;
                 var reader = new FileReader();
-                reader.onload = function (event) {
-                  
-                    temp++;
-                  
+                reader.onload = function (event) {          
+                    ++temp;                
                     var tagA = document.createElement("a");
                     tagA.href = event.target.result;
                     var image = new Image();
-
                     image.src = event.target.result;
                     //add new
                     image.className = "listImage"
@@ -369,36 +304,25 @@ $('.deleteimg').on("click", function (e) { //user click on remove text
         console.log('Input value after remove: ', input.value)
     });
 //count mutifile select 
-$('#Images').change(function () {
+$('#Images').change(function (event) {
 
     var files = $(this)[0].files;
-    if (files.length > 10) {
-        alert("you can select max 10 files.");
+    if (files.length > 10) {   
     } else {
-        alert("correct, you have selected less than 10 files");
+        
     }
 });
-
+var elements;
 function removeIndexImage(index) {
     console.log("Xoa vi tri Thu " + index + "list file con :" + listImage.length);
     //delete List
-
     listImage.splice(index, 1);
-    //update listImage=>Select file
-   
-    var formData = new FormData();
-    for (var i = 0, len = listImage.length; i < len; i++) {
-        formData.append("Images", listImage[i].file);
-    }
-    for (var pair of formData.entries()) {
-        i++;
-        console.log(pair[0]);
-       
-    }
 
-    var elements = document.getElementsByClassName("DivImage");
-        elements[index-1].parentNode.removeChild(elements[index-1]);
-        elements[index - 1].nodeValue = "";
+     elements = document.getElementsByClassName("DivImage");
+  //  elements[index - 1].parentNode.removeChild(elements[index - 1]);
+     elements[index - 1].parentNode.removeChild(elements[index - 1]);
+   
+       
   //  $('#DivImage').eq(index).remove();
 }
 // **** Region CRUD ***************************************************** 
@@ -431,11 +355,16 @@ function InsertFPBChecking() {
         dataType: "json",
         success: function (result) {
             var data = new FormData();
-            if (file.length > 0) {
+          /*  if (file.length > 0) {
                 for (var i = 0; i < file.length; i++) {
                     data.append("fileInput", file[i]);
                 }
-            }
+            }*/
+           
+            for (var i = 0; i < listImage.length; i++) {
+                data.append("fileInput", listImage[i]);
+                }
+            
             var FPBCheckingDetailObj = {
                 ID: 0,
                 Result: $("input[name='Result']:checked").val(),
@@ -515,7 +444,6 @@ function UpdateFPBChecking() {
             InsertFPBCheckingDetail(data);
             $('#myModal').modal('hide');
             alert("Update success!");
-
         },
         error: function (errormessage) {
             alert(errormessage.responseText);
