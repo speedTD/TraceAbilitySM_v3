@@ -59,8 +59,11 @@ namespace TestABC.Controllers
         //    }
         //    return Json(FPBCheckingDetailDB.Insert(FPBCheckingDetail), JsonRequestBehavior.AllowGet);
         //}
-        public JsonResult InsertFPBCheckingDetail()
+        public JsonResult InsertFPBCheckingDetail(int [] dt)
         {
+
+            var y = dt.Length;
+
             FPBCheckingDetail FPBCheckingDetail = Newtonsoft.Json.JsonConvert.DeserializeObject<FPBCheckingDetail>(Request.Form[0]);
             HttpFileCollectionBase httpFiles = Request.Files;
             ReturnFPBCheckingDetail returnFPBCheckingDetail = new ReturnFPBCheckingDetail();

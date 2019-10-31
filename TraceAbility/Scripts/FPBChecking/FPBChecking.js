@@ -7,7 +7,7 @@
 
     $('#UserID').val($('#UserLogin').data('username'));
     $("input[name='Result']").val(["OK"]);
-    debugger;
+
 });
 var checkOK = "OK";
 var FPBCheckingIDLast = "";
@@ -86,7 +86,7 @@ function ViewbyID(ID) {
             $('.BlockID').text(result.LstFPBChecking[0].BlockID);
             $('.UserID').text(result.LstFPBChecking[0].UserID);
             $(".Result").text(result.LstFPBChecking[0].Result);
-            if (result.LstFPBChecking[0].Images != "" && result.LstFPBChecking[0].Images != null && result.LstFPBChecking[0].Images.length>0) {
+            if (result.LstFPBChecking[0].Images != "" && result.LstFPBChecking[0].Images != null && result.LstFPBChecking[0].Images.length > 0) {
                 var links = JSON.parse(result.LstFPBChecking[0].Images);
                 var extention = links[0].split(".")[1];
                 if (extention == "jpg" || extention == "png" || extention == "jpeg") {
@@ -236,114 +236,56 @@ function validate() {
     else {
         $('#BatchNo').css('border-color', 'lightgrey');
     }
-    //debugger;
-    //var result_data = $("input[name='rdo_Result']:checked").val();
-    //if (result_data == null || result_data == "" || result_data == 'undefined') {
-    //    alert('Hãy chọn kết quả kiểm tra/Please,choose Result! ');
-    //    isValid = false;
-    //}
-    //else {
-    //    $('#Result').css('border-color', 'lightgrey');
-    //}
+
     return isValid;
 }
-// **** Event ***************************************************** 
-//$("#Images").change(function (e) {
-   
-//    var myfiles = document.getElementById("Images").files;
-//    var viewImages = document.getElementById("viewImages");
-   
-//    var quan = document.getElementById("Images").value;
-//    var imageType = /image.*/;
-//    console.log(quan);
-//    var html = '';
-//    if (myfiles.length > 0) {
-//        for (i = 0; i < myfiles.length; i++) {
 
-            
-        
-//            if (myfiles[i].type.match(imageType)) {   //image file.
-              
-//                var temp = 0;
-//                var reader = new FileReader();
-//                reader.onload = function (event) {
-//                    temp++;
 
-//                    html += '<div class="ImageContainer" style="position:relative;text-align:center;">';
-//                    html += '<div style="position:absolute;top:8px;right:16px;font-size:18px">';
-//                    html += '<a href="#" onclick="removeIndexImage(' + temp + ')" class="btn btn-primary"><img style="width:25px;height:19px;" src="/Images/Common/upload-tool-delete.png"/></a>';
-//                    html += '</div>';
-//                    html += '<a href="' + event.target.result + '">';
-//                    html += '<img src="' + event.target.result + '" style="width:100%"/>';
-//                    html += '</a>';
-//                    //html += '</div>';
-//                    html += '</div>';
-//                }
 
-//                reader.readAsDataURL(myfiles[i]);
-//            }
-//            else {
-//                var extention = myfiles[i].name.substring(myfiles[i].name.lastIndexOf(".") + 1).toLowerCase();
-//                if (extention == "pdf")
-//                {
-//                    var tagLabel = document.createElement("lable");
-//                    tagLabel.innerHTML = myfiles[i].name;
-//                    tagLabel.style.fontWeight = "bold";
-//                    //viewImages.appendChild(divContainer);
-//                    viewImages.appendChild(tagLabel);
-//                }
-//            }
-//        }
-//        $('#viewImages').html(html);
-//    }
-//});
+var listImage = [];
 
-var listImage=[];
 $("#Images").change(function (e) {
+    // listImage = [];
+    chindex = 0;
     var myfiles = document.getElementById("Images").files;
     var viewImages = document.getElementById("viewImages");
-    var quan = document.getElementById("Images");
+
     var imageType = /image.*/;
- 
+
     var html = '';
+    var temp = listImage.length;
+    debugger;
+ 
     if (myfiles.length > 0) {
         for (i = 0; i < myfiles.length; i++) {
 
-            listImage.push(myfiles.item(i));
            
-            //var divuploadimagetools = document.createElement("div");
-            //divuploadimagetools.className = "upload-image-tools";
-            //divuploadimagetools.innerHTML = '<span class="upload-tool-delete"></span>';
-            //divuploadimagetools.className = "upload-image-tools";
-
             if (myfiles[i].type.match(imageType)) {   //image file.
-
-                var temp = 0;
                 var reader = new FileReader();
                 reader.onload = function (event) {
-                  
-                    temp++;
-                  
+                    listImage.push(myfiles.item(temp));
                     var tagA = document.createElement("a");
                     tagA.href = event.target.result;
                     var image = new Image();
-
                     image.src = event.target.result;
                     //add new
                     image.className = "listImage"
-                    image.height = 345;
-                    image.width = 520;
+                  //  image.height = 345;
+                    //  image.width = 520;
+                      image.height = 50;
+                     image.width = 50;
                     image.id = temp;
                     tagA.appendChild(image);
-                    //divContainer.appendChild(tagA);
-                     
                     var divContainer = document.createElement("div");
                     divContainer.className = "DivImage";
+                    divContainer.id = "DivImage" + temp;
+
                     divContainer.innerHTML += '<div id="myList" class="ImageContainer" style="position:relative;text-align:center;">'
                            + '<div style="position:absolute;top:8px;right:16px;font-size:18px">'
-                           + '<a href="#" id="deleteimg" onclick="removeIndexImage(' + temp + ')" class="btn btn-primary"><img style="width:25px;height:19px;" src="/Images/Common/upload-tool-delete.png"/></a>';
+                           + '<a href="#" id="deleteimg" onclick="removeIndexImage(' + temp + ');" class="btn btn-primary"><img style="width:25px;height:19px;" src="/Images/Common/upload-tool-delete.png"/></a>';
                     divContainer.appendChild(tagA);
                     viewImages.appendChild(divContainer);
+                    temp++;
                 }
                 reader.readAsDataURL(myfiles[i]);
             }
@@ -358,48 +300,24 @@ $("#Images").change(function (e) {
                 }
             }
         }
-        
+
     }
 });
 
-$('.deleteimg').on("click", function (e) { //user click on remove text
-        e.preventDefault(); $(this).parent('div').remove();
-        img.val = '';
-        input.value = null;
-        console.log('Input value after remove: ', input.value)
-    });
-//count mutifile select 
-$('#Images').change(function () {
-
-    var files = $(this)[0].files;
-    if (files.length > 10) {
-        alert("you can select max 10 files.");
-    } else {
-        alert("correct, you have selected less than 10 files");
-    }
-});
-
+var elements;
+var chindex;
+var listDelete =[];
 function removeIndexImage(index) {
-    console.log("Xoa vi tri Thu " + index + "list file con :" + listImage.length);
     //delete List
+      
+    listImage[index] = "";
+    console.log(listImage);
+    var x = document.getElementById("DivImage" + index);
+    x.innerHTML = "";
+    listDelete.push(index);
+    console.log(listDelete);
 
-    listImage.splice(index, 1);
-    //update listImage=>Select file
-   
-    var formData = new FormData();
-    for (var i = 0, len = listImage.length; i < len; i++) {
-        formData.append("Images", listImage[i].file);
-    }
-    for (var pair of formData.entries()) {
-        i++;
-        console.log(pair[0]);
-       
-    }
-
-    var elements = document.getElementsByClassName("DivImage");
-        elements[index-1].parentNode.removeChild(elements[index-1]);
-        elements[index - 1].nodeValue = "";
-  //  $('#DivImage').eq(index).remove();
+   // var removed = listImage.splice(index, 1);
 }
 // **** Region CRUD ***************************************************** 
 function InsertFPBChecking() {
@@ -431,18 +349,30 @@ function InsertFPBChecking() {
         dataType: "json",
         success: function (result) {
             var data = new FormData();
-            if (file.length > 0) {
-                for (var i = 0; i < file.length; i++) {
-                    data.append("fileInput", file[i]);
-                }
-            }
+              if (file.length > 0) {
+                  for (var i = 0; i < file.length; i++) {
+                      data.append("fileInput", file[i]);
+                  }
+              }
+              var data1 = new FormData();
+                  for (var i = 0; i < listDelete.length; i++) {
+                      data.append("listdelete", listDelete[i]);
+                  }
+            
+
+            
+          /*  for (var i = 0; i < listImage.length; i++) {
+                data.append("fileInput", listImage[i]);
+            }*/
             var FPBCheckingDetailObj = {
                 ID: 0,
                 Result: $("input[name='Result']:checked").val(),
                 FPBCheckingID: result.LastID
-           }
+            }
             data.append('FPBCheckingDetailObj', JSON.stringify(FPBCheckingDetailObj));
-            InsertFPBCheckingDetail(data);
+
+            InsertFPBCheckingDetail(data,data1);
+            
             $('#myModal').modal('hide');
             clearTextBox();
             alert("Thêm mới thành công/Insert success!");
@@ -456,9 +386,14 @@ function InsertFPBChecking() {
     });
 }
 function InsertFPBCheckingDetail(data) {
+
     $.ajax({
+        // list  listDelete
         url: "/FPBChecking/InsertFPBCheckingDetail/",
-        data: data,
+        data:  {
+            dt: data,
+            list:listDelete
+            },
         type: "POST",
         contentType: false,
         processData: false,
@@ -515,7 +450,6 @@ function UpdateFPBChecking() {
             InsertFPBCheckingDetail(data);
             $('#myModal').modal('hide');
             alert("Update success!");
-
         },
         error: function (errormessage) {
             alert(errormessage.responseText);
@@ -565,7 +499,7 @@ function DeleleByID(id) {
     if (ans) {
         $.ajax({
             url: "/FPBChecking/Delete/" + id,
-            
+
             type: "POST",
             contentType: "application/json;charset=UTF-8",
             dataType: "json",
@@ -581,14 +515,14 @@ function DeleleByID(id) {
 }
 
 function FPBChecking_Search(_pageNumber) {
-    
+
     var s = $('#SearchFPBCheckingDate').val().split('/');
     var date = s[2] + '-' + s[0] + '-' + s[1];
     var FPBChecking = {
         MachineID: $('#SearchMachineID').val(),
         FPBCheckingDate: date,
         Result: $("input[name='SearchResult']:checked").val(),
-        
+
     };
 
     var returnObj = {
@@ -636,7 +570,5 @@ function FPBChecking_Search(_pageNumber) {
         }
     });
 }
-
-
 
 
