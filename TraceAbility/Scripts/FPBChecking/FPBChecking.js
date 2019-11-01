@@ -7,7 +7,7 @@
 
     $('#UserID').val($('#UserLogin').data('username'));
     $("input[name='Result']").val(["OK"]);
-
+    
 });
 var checkOK = "OK";
 var FPBCheckingIDLast = "";
@@ -86,7 +86,7 @@ function ViewbyID(ID) {
             $('.BlockID').text(result.LstFPBChecking[0].BlockID);
             $('.UserID').text(result.LstFPBChecking[0].UserID);
             $(".Result").text(result.LstFPBChecking[0].Result);
-            if (result.LstFPBChecking[0].Images != "" && result.LstFPBChecking[0].Images != null && result.LstFPBChecking[0].Images.length > 0) {
+            if (result.LstFPBChecking[0].Images != "" && result.LstFPBChecking[0].Images != null && result.LstFPBChecking[0].Images.length>0) {
                 var links = JSON.parse(result.LstFPBChecking[0].Images);
                 var extention = links[0].split(".")[1];
                 if (extention == "jpg" || extention == "png" || extention == "jpeg") {
@@ -236,56 +236,49 @@ function validate() {
     else {
         $('#BatchNo').css('border-color', 'lightgrey');
     }
-
+ 
     return isValid;
 }
 
 
-
-var listImage = [];
-
+var listImage=[];
 $("#Images").change(function (e) {
-    // listImage = [];
-    chindex = 0;
     var myfiles = document.getElementById("Images").files;
     var viewImages = document.getElementById("viewImages");
-
-    var imageType = /image.*/;
-
-    var html = '';
-    var temp = listImage.length;
-    debugger;
  
+    var imageType = /image.*/;
+ 
+    var html = '';
     if (myfiles.length > 0) {
         for (i = 0; i < myfiles.length; i++) {
-
+    
+            listImage.push(myfiles.item(i));
            
+
             if (myfiles[i].type.match(imageType)) {   //image file.
+                var temp = 0;
                 var reader = new FileReader();
-                reader.onload = function (event) {
-                    listImage.push(myfiles.item(temp));
+                reader.onload = function (event) {          
+                    ++temp;                
                     var tagA = document.createElement("a");
                     tagA.href = event.target.result;
                     var image = new Image();
                     image.src = event.target.result;
                     //add new
                     image.className = "listImage"
-                  //  image.height = 345;
-                    //  image.width = 520;
-                      image.height = 50;
-                     image.width = 50;
+                    image.height = 345;
+                    image.width = 520;
                     image.id = temp;
                     tagA.appendChild(image);
+                    //divContainer.appendChild(tagA);
+                     
                     var divContainer = document.createElement("div");
                     divContainer.className = "DivImage";
-                    divContainer.id = "DivImage" + temp;
-
                     divContainer.innerHTML += '<div id="myList" class="ImageContainer" style="position:relative;text-align:center;">'
                            + '<div style="position:absolute;top:8px;right:16px;font-size:18px">'
-                           + '<a href="#" id="deleteimg" onclick="removeIndexImage(' + temp + ');" class="btn btn-primary"><img style="width:25px;height:19px;" src="/Images/Common/upload-tool-delete.png"/></a>';
+                           + '<a href="#" id="deleteimg" onclick="removeIndexImage(' + temp + ')" class="btn btn-primary"><img style="width:25px;height:19px;" src="/Images/Common/upload-tool-delete.png"/></a>';
                     divContainer.appendChild(tagA);
                     viewImages.appendChild(divContainer);
-                    temp++;
                 }
                 reader.readAsDataURL(myfiles[i]);
             }
@@ -300,24 +293,37 @@ $("#Images").change(function (e) {
                 }
             }
         }
-
+        
     }
 });
 
-var elements;
-var chindex;
-var listDelete =[];
-function removeIndexImage(index) {
-    //delete List
-      
-    listImage[index] = "";
-    console.log(listImage);
-    var x = document.getElementById("DivImage" + index);
-    x.innerHTML = "";
-    listDelete.push(index);
-    console.log(listDelete);
+$('.deleteimg').on("click", function (e) { //user click on remove text
+        e.preventDefault(); $(this).parent('div').remove();
+        img.val = '';
+        input.value = null;
+        console.log('Input value after remove: ', input.value)
+    });
+//count mutifile select 
+$('#Images').change(function (event) {
 
-   // var removed = listImage.splice(index, 1);
+    var files = $(this)[0].files;
+    if (files.length > 10) {   
+    } else {
+        
+    }
+});
+var elements;
+function removeIndexImage(index) {
+    console.log("Xoa vi tri Thu " + index + "list file con :" + listImage.length);
+    //delete List
+    listImage.splice(index, 1);
+
+     elements = document.getElementsByClassName("DivImage");
+  //  elements[index - 1].parentNode.removeChild(elements[index - 1]);
+     elements[index - 1].parentNode.removeChild(elements[index - 1]);
+   
+       
+  //  $('#DivImage').eq(index).remove();
 }
 // **** Region CRUD ***************************************************** 
 function InsertFPBChecking() {
@@ -349,30 +355,23 @@ function InsertFPBChecking() {
         dataType: "json",
         success: function (result) {
             var data = new FormData();
-              if (file.length > 0) {
-                  for (var i = 0; i < file.length; i++) {
-                      data.append("fileInput", file[i]);
-                  }
-              }
-              var data1 = new FormData();
-                  for (var i = 0; i < listDelete.length; i++) {
-                      data.append("listdelete", listDelete[i]);
-                  }
-            
-
-            
-          /*  for (var i = 0; i < listImage.length; i++) {
-                data.append("fileInput", listImage[i]);
+          /*  if (file.length > 0) {
+                for (var i = 0; i < file.length; i++) {
+                    data.append("fileInput", file[i]);
+                }
             }*/
+           
+            for (var i = 0; i < listImage.length; i++) {
+                data.append("fileInput", listImage[i]);
+                }
+            
             var FPBCheckingDetailObj = {
                 ID: 0,
                 Result: $("input[name='Result']:checked").val(),
                 FPBCheckingID: result.LastID
-            }
+           }
             data.append('FPBCheckingDetailObj', JSON.stringify(FPBCheckingDetailObj));
-
-            InsertFPBCheckingDetail(data,data1);
-            
+            InsertFPBCheckingDetail(data);
             $('#myModal').modal('hide');
             clearTextBox();
             alert("Thêm mới thành công/Insert success!");
@@ -386,14 +385,9 @@ function InsertFPBChecking() {
     });
 }
 function InsertFPBCheckingDetail(data) {
-
     $.ajax({
-        // list  listDelete
         url: "/FPBChecking/InsertFPBCheckingDetail/",
-        data:  {
-            dt: data,
-            list:listDelete
-            },
+        data: data,
         type: "POST",
         contentType: false,
         processData: false,
@@ -499,7 +493,7 @@ function DeleleByID(id) {
     if (ans) {
         $.ajax({
             url: "/FPBChecking/Delete/" + id,
-
+            
             type: "POST",
             contentType: "application/json;charset=UTF-8",
             dataType: "json",
@@ -515,14 +509,14 @@ function DeleleByID(id) {
 }
 
 function FPBChecking_Search(_pageNumber) {
-
+    
     var s = $('#SearchFPBCheckingDate').val().split('/');
     var date = s[2] + '-' + s[0] + '-' + s[1];
     var FPBChecking = {
         MachineID: $('#SearchMachineID').val(),
         FPBCheckingDate: date,
         Result: $("input[name='SearchResult']:checked").val(),
-
+        
     };
 
     var returnObj = {
@@ -570,5 +564,7 @@ function FPBChecking_Search(_pageNumber) {
         }
     });
 }
+
+
 
 
